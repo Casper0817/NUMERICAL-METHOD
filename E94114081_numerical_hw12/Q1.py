@@ -1,3 +1,19 @@
+#!/usr/bin/env python3
+# ---------------------------------------------------------------
+# poisson_rect.py
+#
+# Solve  u_xx + u_yy = f(x,y) = x*y
+# on the rectangle 0 < x < π, 0 < y < π/2
+# with boundary conditions:
+#   u(0,y)   =  cos y
+#   u(π,y)   = –cos y
+#   u(x,0)   =  cos x
+#   u(x,π/2) =  0
+#
+# Five-point finite difference, uniform grid
+# Δx = Δy = h = 0.1π  → 11 × 6 nodes
+# ---------------------------------------------------------------
+
 import numpy as np
 import math
 
@@ -90,9 +106,13 @@ for j in range(1, Ny):
         u[j, i] = u_int[idx(i, j)]
 
 # ---------------- pretty print table --------------------------
-print(f"\nFinite-difference solution  (h = k = {h:.3f})\n")
-header = ["y\\x"] + [f"{x/pi:4.2f}π" for x in x_vals]   # x/π for compactness
-print("  ".join(f"{h:>10}" for h in header))
+print(f"\nFinite-difference solution  (h = k = {h/pi:.2f}π ≈ {h:.3f})\n")
+
+# 列首：顯示 x = 0, 0.1π, …, π
+header = ["y\\x"] + [f"{x/pi:4.2f}π" for x in x_vals]
+print("  ".join(f"{h:>9}" for h in header))
+
+# 每列：先印 y，再印 u 值
 for j, y in enumerate(y_vals):
-    row = [f"{y/pi:4.2f}π"] + [f"{u[j,i]:10.6f}" for i in range(Nx+1)]
-    print("  ".join(row))
+    row_vals = [f"{u[j,i]:9.4f}" for i in range(Nx+1)]
+    print(f"{y/pi:4.2f}π", *row_vals, sep="  ")
